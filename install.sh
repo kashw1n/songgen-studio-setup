@@ -45,11 +45,17 @@ cp main.py generation.py model_server.py models.py gpu.py config.py schemas.py s
 cp -r web/static/* app/web/static/
 
 # 8. Apply patches
-echo "[8/8] Applying patches..."
+echo "[8/9] Applying patches..."
 cp patches/builders.py app/codeclm/models/builders.py
 cp patches/demucs/apply.py app/third_party/demucs/models/apply.py
 mkdir -p app/tools/gradio
 cp patches/gradio/levo_inference_lowmem.py app/tools/gradio/
+
+# 9. Fix torch.load for PyTorch 2.6+ (weights_only=False)
+echo "[9/9] Fixing torch.load for PyTorch 2.6+..."
+sed -i 's/torch\.load(auto_prompt_path)/torch.load(auto_prompt_path, weights_only=False)/g' app/tools/gradio/levo_inference_lowmem.py
+sed -i 's/torch\.load(self\.pt_path, map_location=.cpu.)/torch.load(self.pt_path, map_location="cpu", weights_only=False)/g' app/tools/gradio/levo_inference_lowmem.py
+sed -i 's/torch\.load(ckpt_path, map_location=.cpu.)/torch.load(ckpt_path, map_location="cpu", weights_only=False)/g' app/codeclm/trainer/codec_song_pl.py
 
 echo ""
 echo "=== Setup complete! ==="
