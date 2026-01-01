@@ -42,6 +42,7 @@ cd ..
 # 7. Copy custom files
 echo "[7/8] Copying custom files..."
 cp main.py generation.py model_server.py models.py gpu.py config.py schemas.py sse.py timing.py app/
+mkdir -p app/web/static/
 cp -r web/static/* app/web/static/
 
 # 8. Apply patches
